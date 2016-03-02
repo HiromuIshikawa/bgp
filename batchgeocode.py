@@ -1,16 +1,33 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import csv
+import codecs
 from pygeocoder import Geocoder, GeocoderResult
 
+def geocode():
+	
+	src = open("src.txt","r")
+	rfile = codecs.open("resultgeo.csv","w","utf-8")
+	writer = csv.writer(rfile)
 
-address = u'Japan, Okayama'
-geocoder = Geocoder()
+	rows = []
+	row = ["lat","lng"]
+	writer.writerow(row)
+	geocoder = Geocoder()
 
-result = geocoder.geocode(address, language="ja")
+	for address in src:
+		print address
+		result = geocoder.geocode(address, language="ja")
+		rows.append([result.coordinates[0],result.coordinates[1]])
+		print result
+		result = geocoder.reverse_geocode(*result.coordinates, language="ja")
+		print result
 
-print result.coordinates
+	writer.writerows(rows)
+	rfile.close()
+	src.close()
+if __name__ == "__main__":
+	geocode()
 
-result = geocoder.reverse_geocode(*result.coordinates, language="ja")
 
-print result
