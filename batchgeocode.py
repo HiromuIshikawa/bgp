@@ -1,16 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import sys
 import csv
 #import codecs
 from pygeocoder import Geocoder, GeocoderResult
 
-def geocode():
+def geocode(src,result):
 	
-	src = open("src.csv","r")
-	wfile = open("resultgeo.csv","w")
+	rfile = open(src,"r")
+	wfile = open(result,"w")
 	writer = csv.writer(wfile)
-	reader = csv.reader(src)
+	reader = csv.reader(rfile)
 	header = next(reader)
 	
 	header.append("lat")	
@@ -22,20 +22,22 @@ def geocode():
 
 	rows = []
 	for data in reader:
-		print(data)
-		print(data[1])
-		result = geocoder.geocode(data[1], language="ja")
-		row = [data[0],data[1],result.coordinates[0],result.coordinates[1]]
-		rows.append(row)
-		result = geocoder.reverse_geocode(*result.coordinates, language="ja")
-		print(result)
+		print("address:" + data[1] + " ...geocoding now")
+		geo = geocoder.geocode(data[1], language="ja")
+		if geo is not None :
+			print("success... (lat,lng)=",end="")	
+			row = [data[0],data[1],geo.coordinates[0],geo.coordinates[1]]
+			rows.append(row)
+			print(geo.coordinates)
+		else:
+			print("error...")
 
-	print(rows)
 	writer.writerows(rows)
 	wfile.close()
-	src.close()
+	rfile.close()
 
 if __name__ == "__main__":
-	geocode()
+	param = sys.argv
+	geocode(param[1],param[2])
 
 
