@@ -2,31 +2,39 @@
 # -*- coding: utf-8 -*-
 
 import csv
-import codecs
+#import codecs
 from pygeocoder import Geocoder, GeocoderResult
 
 def geocode():
 	
-	src = open("src.txt","r")
-	rfile = codecs.open("resultgeo.csv","w","utf-8")
-	writer = csv.writer(rfile)
+	src = open("src.csv","r")
+	wfile = open("resultgeo.csv","w")
+	writer = csv.writer(wfile)
+	reader = csv.reader(src)
+	header = next(reader)
+	
+	header.append("lat")	
+	header.append("lng")
 
-	rows = []
-	row = ["lat","lng"]
-	writer.writerow(row)
+	writer.writerow(header)
+
 	geocoder = Geocoder()
 
-	for address in src:
-		print address
-		result = geocoder.geocode(address, language="ja")
-		rows.append([result.coordinates[0],result.coordinates[1]])
-		print result
+	rows = []
+	for data in reader:
+		print(data)
+		print(data[1])
+		result = geocoder.geocode(data[1], language="ja")
+		row = [data[0],data[1],result.coordinates[0],result.coordinates[1]]
+		rows.append(row)
 		result = geocoder.reverse_geocode(*result.coordinates, language="ja")
-		print result
+		print(result)
 
+	print(rows)
 	writer.writerows(rows)
-	rfile.close()
+	wfile.close()
 	src.close()
+
 if __name__ == "__main__":
 	geocode()
 
