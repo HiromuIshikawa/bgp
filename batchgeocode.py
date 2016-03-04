@@ -19,8 +19,9 @@ def geocode(src,result):
 		geo = geocoder.geocode(rfile.ix[i,"address"], language="ja")
 		if geo is not None :
 			print("success... (lat,lng)=",end="")	
-			rfile.ix[i,["lat","lng"]] = [geo.coordinates[0],geo.coordinates[1]]
+			rfile.ix[i,["lat","lng"]] = geo.coordinates
 			print(geo.coordinates)
+			print(geocoder.reverse_geocode(geo.coordinates[0],geo.coordinates[1],language="ja"))
 		else:
 			print("error...")
 
